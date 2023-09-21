@@ -15,3 +15,11 @@ code {
 .App{
   margin-top: auto;
 }
+
+
+.giveStyle{
+  background-color: #F8F6D4;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 10px
+}

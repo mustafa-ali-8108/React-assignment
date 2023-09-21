@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import InputField from './InputField';
 import ButtonComponent from './Button';
-import ListComponent from './List';
+import DraggableTable from './List';
 import Grid from '@mui/material/Grid';
 
 const App = () => {
@@ -49,28 +49,61 @@ const App = () => {
     }
   };
 
-  const onDrop = (e, targetList) => {
+
+  const onDragStart = (e, item, column) => {
+    e.dataTransfer.setData('item', item);
+    e.dataTransfer.setData('column', column);
+  };
+
+  const onDragOver = (e) => {
     e.preventDefault();
-    const index = parseInt(e.dataTransfer.getData('text/plain'));
+  };
+
+  const onDrop = (e, targetColumn) => {
+    e.preventDefault();
+    const item = e.dataTransfer.getData('item');
+    const sourceColumn = e.dataTransfer.getData('column');
+
+    console.log(sourceColumn,targetColumn)
+    if (sourceColumn === targetColumn) return;
+
+    let sourceList = sourceColumn === 'leftList' ? [...leftList] : [...rightList];
+    let targetList = targetColumn === 'rightList' ? [...rightList] : [...leftList];
+
+    console.log(sourceList,targetList)
+    if(sourceList.length == targetList.length) return;
+
+    const itemIndex = sourceList.indexOf(item);
 
     // Move the last two elements from the target list if the destination list is having more elements
-    if (targetList === 'left' && rightList.length > leftList.length) {
-      setLeftList([...leftList, rightList.pop(), rightList.pop()]);
-    } else if (targetList === 'right' && leftList.length > rightList.length) {
-      setRightList([...rightList, leftList.pop(), leftList.pop()]);
+    if( targetList.length > sourceList.length ){
+      sourceList = [...sourceList,targetList.pop(),targetList.pop()]
     }
+    else{
+      targetList = [...targetList,sourceList.pop(),sourceList.pop()]
+    }
+
+    console.log(sourceList,targetList)
+    
 
     // Add the dropped item to the target list
-    if (targetList === 'left') {
-      setLeftList([...leftList, leftList.splice(index, 1)[0]]);
-    } else if (targetList === 'right') {
-      setRightList([...rightList, rightList.splice(index, 1)[0]]);
+    if (itemIndex !== -1) {
+      targetList = [...targetList,sourceList.splice(itemIndex, 1)]
+
+      // Make both lists equal by removing extra elements
+      const minLength = Math.min(sourceList.length, targetList.length);
+      sourceList = sourceList.slice(0, minLength);
+      targetList = targetList.slice(0, minLength);
+
     }
 
-    // Make both lists equal by removing extra elements
-    const maxLength = Math.max(leftList.length, rightList.length);
-    setLeftList(leftList.slice(0, maxLength));
-    setRightList(rightList.slice(0, maxLength));
+    if (sourceColumn === 'leftList') {
+      setLeftList(sourceList);
+      setRightList(targetList);
+    } else {
+      setLeftList(targetList);
+      setRightList(sourceList);
+    }
   };
 
  
@@ -84,14 +117,16 @@ const App = () => {
           <ButtonComponent onClick={generateLists} />
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
+      
+      
+       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <ListComponent items={leftList} targetList="left" onDrop={onDrop} />
+        <DraggableTable items={leftList} targetList="leftList" onDrop={onDrop} onDragOver={onDragOver} onDragStart={onDragStart} />
         </Grid>
         <Grid item xs={6}>
-          <ListComponent items={rightList} targetList="right" onDrop={onDrop} />
+        <DraggableTable items={rightList} targetList="rightList" onDrop={onDrop} onDragOver={onDragOver} onDragStart={onDragStart} />
         </Grid>
-      </Grid>
+      </Grid> 
     </div>
   );
 };

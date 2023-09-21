@@ -1,23 +1,29 @@
 import React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Draggable from 'react-draggable';
 
-const ListComponent = ({ items, targetList, onDrop }) => {
-  return (
-    <List onDragOver={(e) => e.preventDefault()} onDrop={(e) => onDrop(e, targetList)}>
-      {items.map((item, index) => (
-        <Draggable key={index} onStop={() => {}}>
-          <div>
-            <ListItem>
-              <ListItemText primary={item} />
-            </ListItem>
-          </div>
-        </Draggable>
-      ))}
-    </List>
-  );
+const DraggableTable = ({items, targetList, onDrop, onDragOver, onDragStart}) => {
+
+      return (
+      <>
+        <p>{targetList}</p>
+        <div
+          className='giveStyle'
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, targetList)}>
+
+          {items.map((item, index) => (
+            <div
+              key={`item_${index}`}
+              draggable
+              onDragStart={(e) => onDragStart(e, item, targetList)}
+            >
+              <p>{item}</p>
+            </div>
+          ))}
+
+        </div>
+      </>
+    );
 };
 
-export default ListComponent;
+export default DraggableTable;
+
