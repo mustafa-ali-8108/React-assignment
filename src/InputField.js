@@ -14,7 +14,7 @@ const InputField = ({ onInput }) => {
     <TextField
       type="number"
       label="Number of Rows Needed"
-      value={value}
+      value= {value}
       onChange={handleInputChange}
       fullWidth
     />

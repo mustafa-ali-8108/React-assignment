@@ -71,7 +71,7 @@ const App = () => {
     let targetList = targetColumn === 'rightList' ? [...rightList] : [...leftList];
 
     console.log(sourceList,targetList)
-    if(sourceList.length == targetList.length) return;
+    if(sourceList.length === targetList.length) return;
 
     const itemIndex = sourceList.indexOf(item);
 
@@ -79,10 +79,8 @@ const App = () => {
     if( targetList.length > sourceList.length ){
       sourceList = [...sourceList,targetList.pop(),targetList.pop()]
     }
-    else{
-      targetList = [...targetList,sourceList.pop(),sourceList.pop()]
-    }
 
+    
     console.log(sourceList,targetList)
     
 
