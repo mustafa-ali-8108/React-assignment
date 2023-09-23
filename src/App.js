@@ -64,13 +64,11 @@ const App = () => {
     const item = e.dataTransfer.getData('item');
     const sourceColumn = e.dataTransfer.getData('column');
 
-    console.log(sourceColumn,targetColumn)
     if (sourceColumn === targetColumn) return;
 
     let sourceList = sourceColumn === 'leftList' ? [...leftList] : [...rightList];
     let targetList = targetColumn === 'rightList' ? [...rightList] : [...leftList];
 
-    console.log(sourceList,targetList)
     if(sourceList.length === targetList.length) return;
 
     const itemIndex = sourceList.indexOf(item);
@@ -78,23 +76,28 @@ const App = () => {
     // Move the last two elements from the target list if the destination list is having more elements
     if( targetList.length > sourceList.length ){
       sourceList = [...sourceList,targetList.pop(),targetList.pop()]
+
+      // Add the dropped item to the target list
+      if (itemIndex !== -1) {
+        targetList = [...targetList,sourceList.splice(itemIndex, 1)]
+
+        // Make both lists equal by removing extra elements
+        const minLength = Math.min(sourceList.length, targetList.length);
+        sourceList = sourceList.slice(0, minLength);
+        targetList = targetList.slice(0, minLength);
+
+      }
     }
+    else{
 
-    
-    console.log(sourceList,targetList)
-    
+      // Add the dropped item to the target list
+      if (itemIndex !== -1) {
+        targetList = [...targetList,sourceList.splice(itemIndex, 1)]
 
-    // Add the dropped item to the target list
-    if (itemIndex !== -1) {
-      targetList = [...targetList,sourceList.splice(itemIndex, 1)]
-
-      // Make both lists equal by removing extra elements
-      const minLength = Math.min(sourceList.length, targetList.length);
-      sourceList = sourceList.slice(0, minLength);
-      targetList = targetList.slice(0, minLength);
+      }
 
     }
-
+    
     if (sourceColumn === 'leftList') {
       setLeftList(sourceList);
       setRightList(targetList);
